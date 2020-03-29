@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+                <a class="navbar-brand" href="#">UploadFile</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              </nav>
+              <div class="nav justify-content-center">
+              <div class="card nav justify-content-center" style="width: 18rem; margin-top:7%;">
+                    <div class="card-body text-center">
+                            <input type="file" name="file" id="file" accept="image/*" class="form-control"><br>
+                            <button type="button" class="btn btn-success" id="upload">uploadfile</button>
+                    </div>
+                  </div>
+                </div>
+ <br>
+ <div class="nav justify-content-center img">
+ </div>
+ <script src="/jquery/jquery.js"></script>
+ <script>
+ $(document).ready(function(){
+      var fileData;
+      var myFile;
+      $('#file').change(function(){
+          var filereader = new FileReader();
+          filereader.onload = function(event){
+             fileData  = event.target.result;
+          };
+          myFile = $('#file').prop('files')[0];  
+          console.log('myfile',myFile)
+         filereader.readAsDataURL(myFile)
+      });
+      $('#upload').click(function(){
+          $.ajax({
+              method:"post",
+              url:"/upload",
+              dataType:"JSON",
+              data:{'filename':myFile.name,'file':fileData},
+              success:function(response){
+                  if(response.msg=="success"){
+                     alert('uploaded');
+                     $('#file').val('');
+                     $('.img').append('<img src="data:image/*;base64,'+response.data+'" style="width:300px;height:300px;margin:10px 10px 10px 10px;">')
+                  }
+              },
+              error:function(){
+                  alert('server error');
+              }
+          });
+      });
+ });
+ </script>
+</body>
+</html>
